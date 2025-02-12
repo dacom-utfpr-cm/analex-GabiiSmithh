@@ -12,16 +12,19 @@ def process_tokens(source_file):
     tokens = moore.get_output_from_string(source_file)  # ou a função que você usa para obter os tokens
     return "\n".join(tokens)  # Converte a lista de tokens em uma string com quebras de linha
 
-moore = Moore(['q0', 'q1', 'q2', 'q3','q4', 'q5', 'q6', 'q7','q8', 'q9', 'q10', 'q11','q12', 'q13', 'q14', 'q15',
+states = ['q0', 'q1', 'q2', 'q3','q4', 'q5', 'q6', 'q7','q8', 'q9', 'q10', 'q11','q12', 'q13', 'q14', 'q15',
     'q16', 'q17', 'q18', 'q19','q20', 'q21', 'q22', 'q23', 'q24', 'q25', 'q26','q27', 'q28', 'q29', 'q30', 'q31',
     'q32', 'q33', 'q34', 'q35','q36', 'q37', 'q38', 'q39', 'q40', 'q41','q42', 'q43', 'q44', 'q45','q46', 'q47',
-    'q48', 'q49', 'q50', 'id', 'q51', 'q52', 'q53', 'q54', 'q55', 'q56', 'q57', 'q58', 'q59', 'q60', 'q61', 'q52', 'q64', 'q65', 'q66'],
-    ['i' , 'n', 't', 'l', 'f','s', 'r', 'u', 'v', 'o', 'd', 'w', 'h', 'e', 'a', 'm', 'b', 'c', 'd', 'g', 'j', 'k', 'p', 'q', 'w',
-     'x', 'y', 'z', '+', '-', '*', '/', '<', '>', '.','!', '(', ')', '{', '}', '[',']', ',', ';', '=', '1','2', '3', '4','5', '6', '7', '9', '0', ' ', '\n','x','y','\t'],
-    ['INT', 'IF', 'ELSE', 'VOID', 'RETURN', 'WHILE', 'FLOAT,', 'MINUS', 'PLUS', 'TIMES', 'DIVIDE', 'LESS', 'LESS_EQUAL',
+    'q48', 'q49', 'q50', 'id', 'q51', 'q52', 'q53', 'q54', 'q55', 'q56', 'q57', 'q58', 'q59', 'q60', 'q61', 'q52', 'q64', 'q65', 'q66']
+
+alphabet = ['i' , 'n', 't', 'l', 'f','s', 'r', 'u', 'v', 'o', 'd', 'w', 'h', 'e', 'a', 'm', 'b', 'c', 'd', 'g', 'j', 'k', 'p', 'q', 'w',
+     'x', 'y', 'z', '+', '-', '*', '/', '<', '>', '.','!', '(', ')', '{', '}', '[',']', ',', ';', '=', '1','2', '3', '4','5', '6', '7', '9', '0', ' ', '\n','x','y','\t']
+
+labels = ['INT', 'IF', 'ELSE', 'VOID', 'RETURN', 'WHILE', 'FLOAT,', 'MINUS', 'PLUS', 'TIMES', 'DIVIDE', 'LESS', 'LESS_EQUAL',
     'GREATER_EQUAL', 'GREATER', 'EQUALS', 'DIFFERENT', 'LPAREN', 'RPAREN', 'LBRACKETS', 'RBRACKETS', 'LBRACES', 'RBRACES',
-    'ATTRIBUTION', 'SEMICOLON', 'COMMA', 'NUMBERS', ' ID ', 'AND'],
-    {
+    'ATTRIBUTION', 'SEMICOLON', 'COMMA', 'NUMBERS', ' ID ', 'AND']
+
+transitions = {
     'q0' : {
         '!' : 'q61',  
         'x' : 'q52',
@@ -3490,9 +3493,11 @@ moore = Moore(['q0', 'q1', 'q2', 'q3','q4', 'q5', 'q6', 'q7','q8', 'q9', 'q10', 
         'y' : 'q52',
         'z' : 'q52', 
     },
-    },
-    initial_state='q0',
-    output_table= {
+}
+    
+initial_state = "q0"
+
+output_table = {
         'id' : '',
         'q0' : '',
         'q1' : '',
@@ -3560,7 +3565,14 @@ moore = Moore(['q0', 'q1', 'q2', 'q3','q4', 'q5', 'q6', 'q7','q8', 'q9', 'q10', 
         'q64' : '',
         'q65' : 'LESS\n',
         'q66' : 'GREATER\n'
-    })
+    }
+
+moore = Moore(states,
+    alphabet,
+    labels,
+    transitions,
+    initial_state=initial_state,
+    output_table= output_table)
 
 def main():
     check_cm = False
@@ -3589,6 +3601,16 @@ def main():
         raise IOError(error_handler.newError(check_key, 'ERR-LEX-FILE-NOT-EXISTS'))
 
     else:
+        # Print da configuração do automato caso check_key não é verdadeiro
+        if (not check_key):
+            print(states, 
+                alphabet,
+                labels,
+                transitions,
+                initial_state,
+                output_table)
+
+
         data = open(sys.argv[idx_cm])
         source_file = data.read()
         data.close()  # Fecha o arquivo após a leitura
